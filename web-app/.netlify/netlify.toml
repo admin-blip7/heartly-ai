@@ -1,15 +1,15 @@
-plugins = []
+functionsDirectory = "/root/.openclaw/workspace/heartly-ai/web-app/netlify/functions"
+functionsDirectoryOrigin = "config"
+redirectsOrigin = "config"
 headers = []
-redirects = []
-
-[functions]
-
-[functions."*"]
 
 [build]
 publish = "/root/.openclaw/workspace/heartly-ai/web-app"
-publishOrigin = "default"
+publishOrigin = "config"
+commandOrigin = "config"
 base = "/root/.openclaw/workspace/heartly-ai/web-app"
+command = "npm install"
+functions = "/root/.openclaw/workspace/heartly-ai/web-app/netlify/functions"
 
 [build.environment]
 
@@ -24,3 +24,26 @@ base = "/root/.openclaw/workspace/heartly-ai/web-app"
 [build.processing.js]
 
 [build.services]
+
+[functions]
+
+[functions."*"]
+node_bundler = "esbuild"
+
+[[plugins]]
+origin = "config"
+package = "@netlify/plugin-functions-install-core"
+
+[plugins.inputs]
+
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/:splat"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

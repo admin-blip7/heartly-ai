@@ -1,6 +1,7 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  command = "npm install"
 
 [functions]
   node_bundler = "esbuild"
@@ -10,3 +11,6 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"

@@ -2,6 +2,8 @@
 
 Functional web application for skin analysis with complete user flow.
 
+**Now using AILabTools Skin Analysis PRO API** for advanced metrics and visualizations.
+
 ---
 
 ## 🎯 What This Is
@@ -13,6 +15,42 @@ A **single-page web app** that works like a real product:
 - User can share results or challenge friends
 
 **Not a landing page. A real usable app.**
+
+---
+
+## 🔬 AILabTools Skin Analysis PRO
+
+We use the **PRO version** of AILabTools skin analysis API for maximum accuracy:
+
+### Features:
+- **13+ skin metrics** with severity scores
+- **Visualization maps**: Red areas, brown spots, pores, wrinkles, moisture
+- **Detailed coordinates**: Precise location of each skin issue
+- **Advanced acne classification**: Papules, pustules, nodules
+- **Sensitivity detection**: Red zones from inflammation
+- **Moisture mapping**: Dry areas visualization
+
+### API Endpoint:
+```
+POST https://www.ailabapi.com/api/portrait/analysis/skin-analysis-pro
+```
+
+### Metrics Analyzed:
+1. **Wrinkles**: Forehead, crow's feet, fine lines, glabella, nasolabial
+2. **Eyes**: Dark circles, eye bags
+3. **Texture**: Pores (4 regions), blackheads
+4. **Spots**: Acne (3 types), pigmentation, melanin
+5. **Skin Type**: Oily, Dry, Normal, Combination
+6. **Sensitivity**: Red zones, inflammation areas
+7. **Hydration**: Moisture levels, dry areas
+
+### Visualization Maps Available:
+- `red_area` - Sensitivity/inflammation
+- `brown_area` - Pigmentation
+- `texture_enhanced_pores` - Enlarged pores
+- `texture_enhanced_lines` - Wrinkles overlay
+- `water_area` - Moisture/dryness
+- `rough_area` - Texture issues
 
 ---
 
