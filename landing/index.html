@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Heartly AI - Descubre tu Edad Real de Piel | Análisis Facial con IA</title>
+    <meta name="description" content="Analiza tu piel con inteligencia artificial. Descubre tu edad aparente, recibe recomendaciones personalizadas y mira cómo lucirás en 5 años. Gratis y en segundos.">
+    <meta name="keywords" content="análisis de piel, edad de la piel, análisis facial IA, skincare personalizado, cuidado de la piel, piel saludable, edad aparente, análisis de rostro">
+    <meta name="author" content="Heartly AI">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://heartly.ai/">
+    <meta property="og:title" content="Heartly AI - Tu Piel Tiene una Edad. Descúbrela.">
+    <meta property="og:description" content="Analiza tu piel con IA. Mira cómo lucirás en 5 años si no te cuidas vs si te cuidás. 11 métricas, edad aparente, y ranking social.">
+    <meta property="og:image" content="https://heartly.ai/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://heartly.ai/">
+    <meta property="twitter:title" content="Heartly AI - Tu Piel Tiene una Edad. Descúbrela.">
+    <meta property="twitter:description" content="Analiza tu piel con IA. Mira cómo lucirás en 5 años. Gratis.">
+    <meta property="twitter:image" content="https://heartly.ai/og-image.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://heartly.ai/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Variables */
+        :root {
+            --primary: #00BFA5;
+            --primary-dark: #00897B;
+            --secondary: #FF8A80;
+            --accent: #FFD54F;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --background: #FAFAFA;
+            --white: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+        }
+        
+        /* Base */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+        }
+        
+        .nav-cta {
+            background: var(--primary);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 120px;
+            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 191, 165, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+        
+        .hero-text h1 span {
+            color: var(--primary);
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .hero-description {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s;
+            border: 2px solid var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--text-primary);
+            color: var(--white);
+        }
+        
+        /* Social Proof */
+        .social-proof {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .social-proof-avatars {
+            display: flex;
+        }
+        
+        .social-proof-avatars img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            margin-left: -12px;
+        }
+        
+        .social-proof-avatars img:first-child {
+            margin-left: 0;
+        }
+        
+        .social-proof-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .social-proof-text strong {
+            color: var(--text-primary);
+        }
+        
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+        }
+        
+        .phone-mockup {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .comparison-card {
+            position: absolute;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .comparison-card.worst {
+            top: 20%;
+            left: -10%;
+        }
+        
+        .comparison-card.best {
+            bottom: 10%;
+            right: -10%;
+        }
+        
+        .comparison-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .comparison-label.worst {
+            color: var(--secondary);
+        }
+        
+        .comparison-label.best {
+            color: var(--primary);
+        }
+        
+        .comparison-age {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        /* Urgency Banner */
+        .urgency-banner {
+            background: linear-gradient(90deg, var(--secondary) 0%, #FF5252 100%);
+            color: var(--white);
+            padding: 16px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .urgency-banner span {
+            text-decoration: underline;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: var(--white);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .section-header p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        
+        .feature-card {
+            background: var(--background);
+            border-radius: var(--radius);
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 0;
+            background: var(--background);
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 24px;
+        }
+        
+        .step h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            color: var(--text-secondary);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .step-arrow {
+            position: absolute;
+            top: 30px;
+            right: -20px;
+            font-size: 32px;
+            color: var(--primary);
+        }
+        
+        /* Comparison Section */
+        .comparison-section {
+            padding: 100px 0;
+            background: var(--white);
+        }
+        
+        .comparison-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+        }
+        
+        .comparison-image {
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+        
+        .comparison-image img {
+            width: 100%;
+            display: block;
+        }
+        
+        .comparison-badge {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .comparison-badge.today {
+            background: var(--text-primary);
+            color: var(--white);
+        }
+        
+        .comparison-badge.worst {
+            background: var(--secondary);
+            color: var(--white);
+        }
+        
+        .comparison-badge.best {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 60px;
+        }
+        
+        .testimonial-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow);
+        }
+        
+        .testimonial-stars {
+            color: var(--accent);
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .testimonial-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+        
+        .testimonial-name {
+            font-weight: 600;
+        }
+        
+        .testimonial-age {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: var(--text-primary);
+            color: var(--white);
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        
+        .cta-section p {
+            font-size: 20px;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        .cta-form {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .cta-input {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .cta-input:focus {
+            outline: 2px solid var(--primary);
+        }
+        
+        .cta-button {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            background: var(--primary-dark);
+        }
+        
+        .cta-privacy {
+            margin-top: 16px;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1A1A1A;
+            color: var(--white);
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand p {
+            margin-top: 16px;
+            opacity: 0.7;
+            font-size: 14px;
+        }
+        
+        .footer-links h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--white);
+            opacity: 0.7;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .footer-social a {
+            color: var(--white);
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-text h1 {
+                font-size: 42px;
+            }
+            
+            .hero-cta {
+                justify-content: center;
+            }
+            
+            .hero-visual {
+                display: none;
+            }
+            
+            .features-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-arrow {
+                display: none;
+            }
+            
+            .comparison-demo {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 0 80px;
+            }
+            
+            .hero-text h1 {
+                font-size: 32px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+            }
+            
+            .section-header h2 {
+                font-size: 28px;
+            }
+            
+            .cta-form {
+                flex-direction: column;
+            }
+            
+            .cta-section h2 {
+                font-size: 32px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+    </style>
+    
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        "name": "Heartly AI",
+        "description": "Analiza tu piel con inteligencia artificial. Descubre tu edad aparente, recibe recomendaciones personalizadas y mira cómo lucirás en 5 años.",
+        "operatingSystem": "iOS, Android",
+        "applicationCategory": "HealthApplication",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "2847"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">❤️</span>
+                <span>Heartly AI</span>
+            </a>
+            <a href="#waitlist" class="nav-cta">Obtener Gratis</a>
+        </nav>
+    </header>
+    
+    <!-- Urgency Banner -->
+    <div class="urgency-banner">
+        ⏰ <span>50% de descuento</span> para los primeros 1,000 usuarios • Quedan <span>847 lugares</span>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <p class="hero-subtitle">Tu piel tiene una edad. Probablemente no es la que crees.</p>
+                    <h1>Descubre tu <span>edad real de piel</span> en 30 segundos</h1>
+                    <p class="hero-description">
+                        Análisis facial con IA que te muestra cómo lucirás en 5 años si no te cuidás vs si te cuidás. 
+                        11 métricas, edad aparente, y comparación con amigas.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#waitlist" class="btn-primary pulse">
+                            Analizar Mi Piel Gratis
+                            <span>→</span>
+                        </a>
+                        <a href="#how-it-works" class="btn-secondary">Cómo Funciona</a>
+                    </div>
+                    <div class="social-proof">
+                        <div class="social-proof-avatars">
+                            <img src="https://i.pravatar.cc/100?img=1" alt="Usuario">
+                            <img src="https://i.pravatar.cc/100?img=2" alt="Usuario">
+                            <img src="https://i.pravatar.cc/100?img=3" alt="Usuario">
+                            <img src="https://i.pravatar.cc/100?img=4" alt="Usuario">
+                        </div>
+                        <div class="social-proof-text">
+                            <strong>2,847 mujeres</strong> ya analizaron su piel esta semana
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="phone-mockup.png" alt="Heartly AI App" class="phone-mockup">
+                    <div class="comparison-card worst">
+                        <div class="comparison-label worst">Si no te cuidás</div>
+                        <div class="comparison-age">+15 años</div>
+                    </div>
+                    <div class="comparison-card best">
+                        <div class="comparison-label best">Si te cuidás</div>
+                        <div class="comparison-age">-3 años</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Lo que descubrirás en 30 segundos</h2>
+                <p>Análisis completo de tu piel con inteligencia artificial, sin trucos, sin letra chica.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👶</div>
+                    <h3>Tu Edad Aparente</h3>
+                    <p>Tenés 25, pero tu piel puede verse 28 o 22. Descubre la verdad y compárate con tu edad real.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>11 Métricas Reales</h3>
+                    <p>Arrugas, manchas, poros, flacidez, daño solar, ojeras... Cada aspecto analizado con precisión.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔮</div>
+                    <h3>Visión del Futuro</h3>
+                    <p>Mira cómo lucirás en 5 años si no te cuidás vs si te cuidás. Imágenes generadas con IA.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Tu Ranking</h3>
+                    <p>Compará tu piel con miles de personas de tu edad. ¿Estás en el top 10%?</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👯</div>
+                    <h3>Desafía Amigas</h3>
+                    <p>¿Quién tiene mejor piel? Compite con tus amigas y descubre quién cuida mejor su piel.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Recomendaciones</h3>
+                    <p>Rutina personalizada basada en TU piel. No consejos genéricos, sino hechos para vos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Así de simple es</h2>
+                <p>Tres pasos, 30 segundos, resultados inmediatos.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Tomate una selfie</h3>
+                    <p>Sin filtro, con buena luz. La IA analiza 468 puntos de tu rostro.</p>
+                    <span class="step-arrow">→</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Descubre tu edad real</h3>
+                    <p>Tu edad aparente, los 11 aspectos de tu piel, y comparación con tu edad.</p>
+                    <span class="step-arrow">→</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Mira tu futuro</h3>
+                    <p>Imágenes de cómo lucirás en 5 años. Tu rutina personalizada. Listo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comparison Demo -->
+    <section class="comparison-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Mira el antes y después</h2>
+                <p>Esto es lo que verás: tu piel hoy, en 5 años si no te cuidás, y en 5 años si te cuidás.</p>
+            </div>
+            <div class="comparison-demo">
+                <div class="comparison-image">
+                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=600&fit=crop" alt="Hoy">
+                    <div class="comparison-badge today">Hoy: 25 años</div>
+                </div>
+                <div class="comparison-image">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=600&fit=crop" alt="Peor caso">
+                    <div class="comparison-badge worst">Si no te cuidás: 40 años</div>
+                </div>
+                <div class="comparison-image">
+                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=600&fit=crop" alt="Mejor caso">
+                    <div class="comparison-badge best">Si te cuidás: 22 años</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Lo que dicen las que ya lo probaron</h2>
+                <p>Más de 2,800 mujeres ya descubrieron su edad real de piel.</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Tenía 24 y aparentaba 29. Me asusté, pero ahora tengo mi rutina y bajé a 22. ¡Funciona!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/100?img=5" alt="María" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">María González</div>
+                            <div class="testimonial-age">24 años • México</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"La foto del futuro me cambió. Vi cómo voy a lucir si no me cuido y ahora uso SPF todos los días."</p>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/100?img=9" alt="Carla" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">Carla Rodríguez</div>
+                            <div class="testimonial-age">28 años • Argentina</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Desafié a mi mejor amiga y gané 😏 Mis poros están mejor que los suyos. #TeamHeartly"</p>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/100?img=16" alt="Ana" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">Ana Martínez</div>
+                            <div class="testimonial-age">22 años • Colombia</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section" id="waitlist">
+        <div class="container">
+            <h2>Descubrí tu edad real de piel</h2>
+            <p>Sumate a los primeros 1,000 usuarios y conseguí acceso gratis de por vida.</p>
+            <form class="cta-form" action="https://formspree.io/f/your-form-id" method="POST">
+                <input type="email" name="email" class="cta-input" placeholder="Tu email" required>
+                <button type="submit" class="cta-button">Quiero Analizar Mi Piel</button>
+            </form>
+            <p class="cta-privacy">🔒 Sin spam. Solo te escribimos cuando la app esté lista.</p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo" style="color: white;">
+                        <span class="logo-icon">❤️</span>
+                        <span>Heartly AI</span>
+                    </a>
+                    <p>Análisis de piel con inteligencia artificial. Descubre tu edad real y cómo lucirás en el futuro.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Producto</h4>
+                    <ul>
+                        <li><a href="#features">Características</a></li>
+                        <li><a href="#how-it-works">Cómo Funciona</a></li>
+                        <li><a href="#">Precios</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacidad</a></li>
+                        <li><a href="#">Términos</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Contacto</h4>
+                    <ul>
+                        <li><a href="mailto:hola@heartly.ai">hola@heartly.ai</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">TikTok</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Heartly AI. Todos los derechos reservados.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Instagram">📸</a>
+                    <a href="#" aria-label="TikTok">🎵</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Analytics (placeholder) -->
+    <script>
+        // Google Analytics placeholder
+        // Facebook Pixel placeholder
+    </script>
+</body>
+</html>
