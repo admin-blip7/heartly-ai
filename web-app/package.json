@@ -1,0 +1,8 @@
+{
+  "name": "heartly-ai-web",
+  "version": "1.0.0",
+  "description": "Heartly AI - Skin Analysis Web App",
+  "dependencies": {
+    "form-data": "^4.0.0"
+  }
+}

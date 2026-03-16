@@ -774,6 +774,7 @@
         let currentScreen = 'welcome-screen';
         let userAge = 25; // Default, will be asked
         let videoStream = null;
+        let capturedImage = null; // Store captured/uploaded image
         
         // Screen Management
         function showScreen(screenId) {
@@ -821,7 +822,15 @@
             const canvas = document.getElementById('canvas');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
+            const ctx = canvas.getContext('2d');
+            
+            // Mirror the image ( selfie mode)
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0);
+            
+            // Convert to base64 and store
+            capturedImage = canvas.toDataURL('image/jpeg', 0.8);
             
             // Stop camera
             stopCamera();
@@ -836,90 +845,112 @@
                 // Stop camera if active
                 stopCamera();
                 
-                // Go to loading
-                showScreen('loading-screen');
+                // Convert file to base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    capturedImage = e.target.result;
+                    showScreen('loading-screen');
+                };
+                reader.readAsDataURL(file);
             }
         }
         
-        // Analysis Simulation
-        function startAnalysis() {
-            let progress = 0;
+        // Real Analysis with AILabTools API
+        async function startAnalysis() {
             const progressBar = document.getElementById('progress-fill');
             const progressText = document.getElementById('progress-text');
             
-            const steps = [
-                { id: 'step-1', progress: 25 },
-                { id: 'step-2', progress: 50 },
-                { id: 'step-3', progress: 75 },
-                { id: 'step-4', progress: 100 }
-            ];
-            
-            let currentStep = 0;
-            
-            const interval = setInterval(() => {
-                progress += 2;
-                progressBar.style.width = progress + '%';
-                progressText.textContent = progress + '%';
-                
-                // Update steps
-                if (currentStep < steps.length && progress >= steps[currentStep].progress - 20) {
-                    const stepEl = document.getElementById(steps[currentStep].id);
-                    stepEl.classList.remove('active');
-                    stepEl.classList.add('done');
-                    stepEl.querySelector('.step-icon').textContent = '✓';
-                    
-                    if (currentStep + 1 < steps.length) {
-                        document.getElementById(steps[currentStep + 1].id).classList.add('active');
-                    }
-                    
-                    currentStep++;
+            // Start progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                if (progress < 90) {
+                    progress += 1;
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = progress + '%';
                 }
+            }, 100);
+            
+            // Mark first step as done
+            updateStep('step-1', 'done');
+            updateStep('step-2', 'active');
+            
+            try {
+                // Call our backend function
+                const response = await fetch('/.netlify/functions/analyze-skin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        image: capturedImage
+                    })
+                });
                 
-                if (progress >= 100) {
-                    clearInterval(interval);
+                const result = await response.json();
+                
+                // Complete progress
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+                progressText.textContent = '100%';
+                updateStep('step-2', 'done');
+                updateStep('step-3', 'done');
+                updateStep('step-4', 'done');
+                
+                if (result.success) {
                     setTimeout(() => {
-                        showResults();
+                        showResults(result);
                     }, 500);
+                } else {
+                    alert('Error: ' + (result.error || 'No se pudo analizar la imagen'));
+                    showScreen('camera-screen');
                 }
-            }, 80);
+                
+            } catch (error) {
+                clearInterval(progressInterval);
+                console.error('Analysis error:', error);
+                alert('Error al conectar con el servidor. Intenta de nuevo.');
+                showScreen('camera-screen');
+            }
         }
         
-        // Results
-        function showResults() {
-            // Generate random but realistic metrics
-            const metrics = [
-                { name: 'Firmeza', score: 72, icon: '💪' },
-                { name: 'Arrugas', score: 65, icon: '〰️' },
-                { name: 'Poros', score: 58, icon: '⚫' },
-                { name: 'Manchas', score: 70, icon: '🎨' },
-                { name: 'Ojeras', score: 55, icon: '🌑' },
-                { name: 'Hidratación', score: 68, icon: '💧' },
-                { name: 'Textura', score: 75, icon: '✨' },
-                { name: 'Elasticidad', score: 62, icon: '🔄' },
-                { name: 'Brillo', score: 80, icon: '🌟' },
-                { name: 'Daño Solar', score: 45, icon: '☀️' },
-                { name: 'Líneas Expresión', score: 60, icon: '😊' }
-            ];
+        function updateStep(stepId, status) {
+            const stepEl = document.getElementById(stepId);
+            stepEl.classList.remove('active', 'done');
+            stepEl.classList.add(status);
+            if (status === 'done') {
+                stepEl.querySelector('.step-icon').textContent = '✓';
+            }
+        }
+        
+        // Results with real data
+        function showResults(data) {
+            // Use real metrics from API
+            const metrics = data.metrics || [];
+            const overallScore = data.overallScore || 68;
             
-            // Calculate overall score
-            const overallScore = Math.round(metrics.reduce((sum, m) => sum + m.score, 0) / metrics.length);
             document.getElementById('overall-score').textContent = overallScore;
             
-            // Calculate apparent age (slightly higher for urgency)
-            const apparentAge = userAge + Math.floor(Math.random() * 3) + 1;
+            // Calculate apparent age based on score
+            const ageDifference = overallScore >= 75 ? -2 : 
+                                  overallScore >= 65 ? 0 : 
+                                  overallScore >= 55 ? 2 : 4;
+            const apparentAge = userAge + ageDifference;
+            
             document.getElementById('apparent-age').textContent = apparentAge;
             
-            const ageDiff = apparentAge - userAge;
             const ageDiffEl = document.getElementById('age-diff');
-            if (ageDiff > 0) {
-                ageDiffEl.textContent = `+${ageDiff} años 😕`;
+            if (ageDifference > 0) {
+                ageDiffEl.textContent = `+${ageDifference} años 😕`;
                 ageDiffEl.className = 'age-diff positive';
-            } else {
-                ageDiffEl.textContent = `${ageDiff} años 🎉`;
+            } else if (ageDifference < 0) {
+                ageDiffEl.textContent = `${ageDifference} años 🎉`;
                 ageDiffEl.className = 'age-diff negative';
+            } else {
+                ageDiffEl.textContent = 'Perfecto ✨';
+                ageDiffEl.className = 'age-diff';
             }
             
-            // Populate metrics grid
+            // Populate metrics grid with real data
             const metricsGrid = document.getElementById('metrics-grid');
             metricsGrid.innerHTML = metrics.map(m => {
                 const color = m.score >= 70 ? 'var(--primary)' : 
@@ -936,6 +967,18 @@
                     </div>
                 `;
             }).join('');
+            
+            // Update ranking if available
+            if (data.rankingPercentile) {
+                const rankingSection = document.querySelector('.ranking-title');
+                if (rankingSection) {
+                    rankingSection.textContent = `Top ${data.rankingPercentile}%`;
+                }
+                const rankingSubtitle = document.querySelector('.ranking-subtitle');
+                if (rankingSubtitle) {
+                    rankingSubtitle.textContent = `Tu piel está mejor que el ${100 - data.rankingPercentile}% de personas de ${userAge} años`;
+                }
+            }
             
             showScreen('results-screen');
         }
