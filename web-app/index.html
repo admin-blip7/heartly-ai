@@ -17,12 +17,12 @@
         }
         
         :root {
-            --primary: #00BFA5;
-            --warning: #FF6B6B;
-            --text: #1a1a1a;
-            --text-light: #757575;
-            --bg: #fafafa;
-            --white: #fff;
+            --primary: #000000;
+            --warning: #333333;
+            --text: #000000;
+            --text-light: #666666;
+            --bg: #ffffff;
+            --white: #ffffff;
         }
         
         body {
@@ -584,10 +584,10 @@
                 const scoreValue = m.score !== null && m.score !== undefined ? m.score : 0;
                 const displayScore = scoreValue !== null && scoreValue !== undefined ? scoreValue + '%' : '--';
                 
-                // Color based on score
-                let color = '#00BFA5';
-                if (scoreValue < 50) color = '#FF6B6B';
-                else if (scoreValue < 70) color = '#FFA726';
+                // Color based on score (black/white/gray scale)
+                let color = '#000000';
+                if (scoreValue < 50) color = '#333333';
+                else if (scoreValue < 70) color = '#666666';
                 
                 const card = document.createElement('div');
                 card.className = 'metric-card';
