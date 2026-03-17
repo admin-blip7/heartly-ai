@@ -4,17 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- SEO -->
-    <title>Heartly AI - Analiza tu Piel con IA | Descubre tu Edad Real</title>
-    <meta name="description" content="Sube tu foto y descubre tu edad real de piel. Análisis con IA, 11 métricas, predicción del futuro. Gratis y en segundos.">
+    <title>Heartly AI - Análisis de Piel</title>
+    <meta name="description" content="Análisis de piel con inteligencia artificial. Descubre la edad real de tu piel.">
     
-    <!-- Open Graph -->
-    <meta property="og:title" content="Acabo de descubrir que mi piel tiene 29 años 😱">
-    <meta property="og:description" content="Analiza tu piel con IA y mira cómo lucirás en 5 años.">
-    <meta property="og:type" content="website">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -25,247 +18,136 @@
         
         :root {
             --primary: #00BFA5;
-            --primary-dark: #00897B;
-            --secondary: #FF8A80;
             --warning: #FF6B6B;
-            --success: #00BFA5;
-            --text: #212121;
+            --text: #1a1a1a;
             --text-light: #757575;
-            --bg: #FAFAFA;
-            --white: #FFFFFF;
-            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --bg: #fafafa;
+            --white: #fff;
         }
         
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
+            line-height: 1.5;
         }
         
-        /* Hide all screens by default */
         .screen {
             display: none;
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
         }
         
         .screen.active {
+            display: block;
+        }
+        
+        /* Welcome */
+        .welcome {
             display: flex;
             flex-direction: column;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Screen 1: Welcome */
-        #welcome-screen {
-            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
         }
         
-        .logo {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-        
-        .app-name {
+        .welcome h1 {
             font-size: 32px;
-            font-weight: 800;
+            font-weight: 700;
             margin-bottom: 8px;
         }
         
-        .tagline {
-            font-size: 18px;
+        .welcome p {
             color: var(--text-light);
-            margin-bottom: 40px;
+            font-size: 15px;
+            margin-bottom: 32px;
         }
         
-        .feature-list {
-            text-align: left;
-            margin-bottom: 40px;
-        }
-        
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
         }
         
-        .feature-icon {
-            font-size: 24px;
+        .btn:active {
+            transform: scale(0.98);
         }
         
         .btn-primary {
             background: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 18px 48px;
-            font-size: 18px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: var(--shadow);
+            color: white;
         }
         
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .social-proof {
-            margin-top: 40px;
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        
-        .social-proof strong {
-            color: var(--text);
-        }
-        
-        /* Screen 2: Camera */
-        #camera-screen {
+        .btn-secondary {
             background: var(--white);
+            color: var(--text);
+            border: 1px solid #e0e0e0;
         }
         
-        .camera-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .camera-header h2 {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-        
-        .camera-header p {
-            color: var(--text-light);
-            font-size: 14px;
-        }
-        
+        /* Camera */
         .camera-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .camera-frame {
             position: relative;
+            background: #000;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
         }
         
         #video {
             width: 100%;
-            max-width: 400px;
-            border-radius: 16px;
+            display: block;
             transform: scaleX(-1);
-        }
-        
-        .face-guide {
-            position: absolute;
-            width: 280px;
-            height: 350px;
-            border: 3px dashed var(--primary);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
         }
         
         .camera-actions {
             display: flex;
-            gap: 16px;
-            margin-top: 24px;
+            gap: 12px;
         }
         
-        .btn-camera {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 4px solid var(--white);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            transition: all 0.3s;
+        .camera-actions .btn {
+            flex: 1;
         }
         
-        .btn-camera:hover {
-            transform: scale(1.1);
-        }
-        
-        .btn-secondary {
-            background: var(--bg);
-            color: var(--text);
-            border: 2px solid var(--text-light);
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-secondary:hover {
-            background: var(--text-light);
-            color: var(--white);
-        }
-        
-        .upload-option {
-            margin-top: 16px;
-            font-size: 14px;
-            color: var(--text-light);
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        
-        #file-input {
+        input[type="file"] {
             display: none;
         }
         
-        /* Screen 3: Loading */
-        #loading-screen {
-            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
         }
         
-        .loading-animation {
-            font-size: 80px;
-            margin-bottom: 24px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .loading-text {
-            font-size: 24px;
-            font-weight: 700;
+        .progress-container {
+            width: 100%;
             margin-bottom: 32px;
         }
         
         .progress-bar {
-            width: 100%;
-            max-width: 300px;
-            height: 8px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 4px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
             overflow: hidden;
             margin-bottom: 16px;
         }
@@ -273,100 +155,75 @@
         .progress-fill {
             height: 100%;
             background: var(--primary);
-            border-radius: 4px;
+            width: 0%;
             transition: width 0.3s;
         }
         
         .progress-text {
-            font-size: 14px;
-            color: var(--text-light);
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text);
         }
         
         .loading-steps {
-            margin-top: 40px;
             text-align: left;
+            width: 100%;
         }
         
-        .loading-step {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            color: var(--text-light);
+        .step {
+            padding: 12px 0;
+            opacity: 0.4;
+            transition: opacity 0.3s;
         }
         
-        .loading-step.active {
-            color: var(--text);
-            font-weight: 600;
+        .step.active {
+            opacity: 1;
         }
         
-        .loading-step.done {
-            color: var(--primary);
+        .step.done {
+            opacity: 0.6;
         }
         
         .step-icon {
+            display: inline-block;
             width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        
-        .loading-step.active .step-icon {
-            background: var(--primary);
-            color: var(--white);
-        }
-        
-        .loading-step.done .step-icon {
-            background: var(--primary);
-            color: var(--white);
-        }
-        
-        /* Screen 4: Results */
-        #results-screen {
-            background: var(--bg);
-            padding: 0;
-        }
-        
-        .results-header {
-            background: linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%);
-            padding: 40px 20px;
             text-align: center;
+            margin-right: 8px;
         }
         
-        .score-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: var(--white);
-            margin: 0 auto 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
+        /* Results */
+        .results {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+        
+        .score-header {
+            text-align: center;
+            margin-bottom: 32px;
         }
         
         .score-number {
-            font-size: 56px;
-            font-weight: 800;
+            font-size: 72px;
+            font-weight: 700;
             color: var(--primary);
+            line-height: 1;
         }
         
         .score-label {
             font-size: 14px;
             color: var(--text-light);
+            margin-top: 4px;
         }
         
-        .age-comparison {
+        .age-section {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-bottom: 24px;
+            gap: 32px;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--white);
+            border-radius: 16px;
         }
         
         .age-item {
@@ -384,17 +241,8 @@
             font-weight: 700;
         }
         
-        .age-number.actual {
-            color: var(--text);
-        }
-        
-        .age-number.apparent {
-            color: var(--primary);
-        }
-        
         .age-diff {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
             margin-top: 4px;
         }
         
@@ -406,28 +254,21 @@
             color: var(--primary);
         }
         
-        .results-body {
-            padding: 24px 20px;
+        .metrics-section {
+            margin-bottom: 32px;
         }
         
         .section-title {
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 16px;
-        }
-        
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 32px;
         }
         
         .metric-card {
             background: var(--white);
             border-radius: 12px;
             padding: 16px;
-            box-shadow: var(--shadow);
+            margin-bottom: 12px;
         }
         
         .metric-header {
@@ -439,329 +280,137 @@
         
         .metric-name {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
         }
         
         .metric-score {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 600;
         }
         
         .metric-bar {
-            height: 6px;
-            background: var(--bg);
-            border-radius: 3px;
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
             overflow: hidden;
         }
         
         .metric-fill {
             height: 100%;
-            border-radius: 3px;
             transition: width 0.5s;
         }
         
-        /* Future Comparison Section */
-        .future-section {
+        .metric-description {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 8px;
+        }
+        
+        .results-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: var(--white);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
+            padding: 16px 24px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
         
-        .future-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        
-        .future-images {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .future-image {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-            background: var(--bg);
-        }
-        
-        .future-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .future-badge {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--white);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        
-        .future-badge.today {
-            background: var(--text);
-            color: var(--white);
-        }
-        
-        .future-badge.worst {
-            background: var(--warning);
-            color: var(--white);
-        }
-        
-        .future-badge.best {
-            background: var(--primary);
-            color: var(--white);
-        }
-        
-        /* Ranking Section */
-        .ranking-section {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border-radius: 12px;
-            padding: 24px;
-            color: var(--white);
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .ranking-badge {
-            font-size: 48px;
+        .results-actions .btn {
             margin-bottom: 8px;
         }
         
-        .ranking-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        
-        .ranking-subtitle {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        /* Actions */
-        .results-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .btn-challenge {
-            background: var(--secondary);
-            color: var(--white);
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-share {
-            background: var(--white);
-            color: var(--text);
-            border: 2px solid var(--text-light);
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-retake {
-            background: transparent;
-            color: var(--text-light);
-            border: none;
-            padding: 12px;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        
-        /* Responsive */
-        @media (max-width: 480px) {
-            .app-name {
-                font-size: 28px;
-            }
-            
-            .score-number {
-                font-size: 48px;
-            }
-            
-            .age-number {
-                font-size: 28px;
+        @media (min-width: 768px) {
+            .results-actions {
+                position: static;
+                box-shadow: none;
+                margin-top: 32px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Screen 1: Welcome -->
-    <div id="welcome-screen" class="screen active">
-        <div class="logo">❤️</div>
-        <h1 class="app-name">Heartly AI</h1>
-        <p class="tagline">Tu piel tiene una edad. Descúbrela.</p>
-        
-        <div class="feature-list">
-            <div class="feature-item">
-                <span class="feature-icon">📸</span>
-                <span>Análisis con IA en 30 segundos</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">👶</span>
-                <span>Tu edad aparente real</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">🔮</span>
-                <span>Mira cómo lucirás en 5 años</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">🏆</span>
-                <span>Compara con tu edad</span>
-            </div>
-        </div>
-        
-        <button class="btn-primary" onclick="showScreen('camera-screen')">
-            Analizar Mi Piel
-        </button>
-        
-        <p class="social-proof">
-            <strong>2,847 personas</strong> ya analizaron su piel hoy
-        </p>
-    </div>
     
-    <!-- Screen 2: Camera -->
-    <div id="camera-screen" class="screen">
-        <div class="camera-header">
-            <h2>Tomate una selfie</h2>
-            <p>Sin filtro, con buena luz. Centrá tu rostro en el óvalo.</p>
-        </div>
-        
-        <div class="camera-container">
-            <video id="video" autoplay playsinline></video>
-            <div class="face-guide"></div>
-        </div>
-        
-        <div class="camera-actions">
-            <button class="btn-camera" onclick="capturePhoto()">
-                📷
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome">
+            <h1>Heartly AI</h1>
+            <p>Descubre la edad real de tu piel con análisis de inteligencia artificial</p>
+            <button class="btn btn-primary" onclick="showScreen('camera-screen')">
+                Analizar mi piel
             </button>
         </div>
-        
-        <label class="upload-option" for="file-input">
-            O sube una foto de tu galería
-        </label>
-        <input type="file" id="file-input" accept="image/*" onchange="handleFileUpload(event)">
     </div>
     
-    <!-- Screen 3: Loading -->
+    <!-- Camera Screen -->
+    <div id="camera-screen" class="screen">
+        <div class="camera-container">
+            <div class="camera-frame">
+                <video id="video" autoplay playsinline></video>
+            </div>
+            <div class="camera-actions">
+                <button class="btn btn-primary" onclick="capturePhoto()">
+                    Tomar foto
+                </button>
+                <label class="btn btn-secondary">
+                    Subir foto
+                    <input type="file" accept="image/*" onchange="handleFileUpload(event)">
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Screen -->
     <div id="loading-screen" class="screen">
-        <div class="loading-animation">🔬</div>
-        <h2 class="loading-text">Analizando tu piel...</h2>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-        </div>
-        <p class="progress-text" id="progress-text">0%</p>
-        
-        <div class="loading-steps">
-            <div class="loading-step active" id="step-1">
-                <div class="step-icon">1</div>
-                <span>Detectando rostro...</span>
+        <div class="loading">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">0%</div>
             </div>
-            <div class="loading-step" id="step-2">
-                <div class="step-icon">2</div>
-                <span>Analizando 11 métricas...</span>
-            </div>
-            <div class="loading-step" id="step-3">
-                <div class="step-icon">3</div>
-                <span>Calculando edad aparente...</span>
-            </div>
-            <div class="loading-step" id="step-4">
-                <div class="step-icon">4</div>
-                <span>Generando predicciones...</span>
+            <div class="loading-steps">
+                <div class="step" id="step-1">
+                    <span class="step-icon">1</span> Procesando imagen...
+                </div>
+                <div class="step" id="step-2">
+                    <span class="step-icon">2</span> Analizando tu piel...
+                </div>
+                <div class="step" id="step-3">
+                    <span class="step-icon">3</span> Calculando métricas...
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Screen 4: Results -->
+    <!-- Results Screen -->
     <div id="results-screen" class="screen">
-        <div class="results-header">
-            <div class="score-circle">
-                <div class="score-number" id="overall-score">68</div>
-                <div class="score-label">Score de Piel</div>
+        <div class="results">
+            <div class="score-header">
+                <div class="score-number" id="overall-score">--</div>
+                <div class="score-label">Score de tu piel</div>
             </div>
             
-            <div class="age-comparison">
+            <div class="age-section">
                 <div class="age-item">
-                    <div class="age-label">Tu edad real</div>
-                    <div class="age-number actual" id="actual-age">25</div>
+                    <div class="age-label">Tu edad</div>
+                    <div class="age-number" id="actual-age">--</div>
                 </div>
                 <div class="age-item">
                     <div class="age-label">Tu piel aparenta</div>
-                    <div class="age-number apparent" id="apparent-age">27</div>
-                    <div class="age-diff positive" id="age-diff">+2 años 😕</div>
+                    <div class="age-number" id="apparent-age">--</div>
+                    <div class="age-diff" id="age-diff"></div>
                 </div>
             </div>
-        </div>
-        
-        <div class="results-body">
-            <h3 class="section-title">📊 Tus 11 Métricas</h3>
-            <div class="metrics-grid" id="metrics-grid">
-                <!-- Metrics will be populated by JS -->
-            </div>
             
-            <div class="future-section">
-                <h3 class="future-title">🔮 Así lucirás en 5 años</h3>
-                <div class="future-images">
-                    <div class="future-image">
-                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=300&fit=crop&face" alt="Hoy">
-                        <div class="future-badge today">Hoy: 25</div>
-                    </div>
-                    <div class="future-image">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=300&fit=crop&face" alt="Si no te cuidás">
-                        <div class="future-badge worst">Sin cuidado: 35</div>
-                    </div>
-                    <div class="future-image">
-                        <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=300&fit=crop&face" alt="Si te cuidás">
-                        <div class="future-badge best">Cuidando: 23</div>
-                    </div>
-                </div>
-                <p style="font-size: 13px; color: var(--text-light); text-align: center;">
-                    Tu piel puede lucir <strong style="color: var(--primary);">-2 años</strong> o <strong style="color: var(--warning);">+10 años</strong><br>
-                    Todo depende de cómo la cuides
-                </p>
-            </div>
-            
-            <div class="ranking-section">
-                <div class="ranking-badge">🏆</div>
-                <div class="ranking-title">Top 32%</div>
-                <div class="ranking-subtitle">Tu piel está mejor que el 68% de personas de 25 años</div>
+            <div class="metrics-section">
+                <h3 class="section-title" id="metrics-title">Métricas</h3>
+                <div id="metrics-grid"></div>
             </div>
             
             <div class="results-actions">
-                <button class="btn-challenge" onclick="challengeFriend()">
-                    👯 Desafiar a una Amiga
-                </button>
-                <button class="btn-share" onclick="shareResults()">
-                    📲 Compartir Mis Resultados
-                </button>
-                <button class="btn-retake" onclick="showScreen('camera-screen')">
-                    Tomar otra foto
+                <button class="btn btn-secondary" onclick="showScreen('camera-screen')">
+                    Nuevo análisis
                 </button>
             </div>
         </div>
@@ -770,106 +419,27 @@
     <canvas id="canvas" style="display: none;"></canvas>
     
     <script>
-        // State
-        let currentScreen = 'welcome-screen';
-        let userAge = 25; // Default, will be asked
         let videoStream = null;
-        let capturedImage = null; // Store captured/uploaded image
+        let capturedImage = null;
+        let userAge = 25;
         
-        // ==================== STORAGE FUNCTIONS ====================
-        
-        /**
-         * Save analysis to history
-         */
-        function saveAnalysisToHistory(analysis) {
-            const history = getAnalysisHistory();
-            
-            const analysisRecord = {
-                analysisId: analysis.analysisId,
-                timestamp: analysis.timestamp,
-                overallScore: analysis.overallScore,
-                skinAge: analysis.skinAge,
-                metrics: analysis.metrics,
-                skinType: analysis.skinType,
-                rankingPercentile: analysis.rankingPercentile
-            };
-            
-            history.push(analysisRecord);
-            
-            // Keep only last 50 analyses
-            if (history.length > 50) {
-                history.shift();
-            }
-            
-            localStorage.setItem('heartly_analysis_history', JSON.stringify(history));
-            
-            console.log('✅ Analysis saved:', analysisRecord.analysisId);
-            return analysisRecord;
-        }
-        
-        /**
-         * Get analysis history
-         */
-        function getAnalysisHistory() {
-            const history = localStorage.getItem('heartly_analysis_history');
-            return history ? JSON.parse(history) : [];
-        }
-        
-        /**
-         * Get previous analysis (before latest)
-         */
-        function getPreviousAnalysis() {
-            const history = getAnalysisHistory();
-            return history.length > 1 ? history[history.length - 2] : null;
-        }
-        
-        /**
-         * Get history statistics
-         */
-        function getHistoryStats() {
-            const history = getAnalysisHistory();
-            
-            if (history.length === 0) {
-                return {
-                    totalAnalyses: 0,
-                    averageScore: null,
-                    bestScore: null
-                };
-            }
-            
-            const scores = history.map(a => a.overallScore);
-            
-            return {
-                totalAnalyses: history.length,
-                averageScore: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
-                bestScore: Math.max(...scores)
-            };
-        }
-        
-        // ==================== END STORAGE ====================
-        
-        // Screen Management
+        // Screen management
         function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            currentScreen = screenId;
             
-            // Start camera if showing camera screen
             if (screenId === 'camera-screen') {
                 startCamera();
             } else if (videoStream) {
                 stopCamera();
             }
             
-            // Start analysis if showing loading screen
             if (screenId === 'loading-screen') {
                 startAnalysis();
             }
         }
         
-        // Camera Functions
+        // Camera
         async function startCamera() {
             try {
                 videoStream = await navigator.mediaDevices.getUserMedia({
@@ -877,7 +447,6 @@
                 });
                 document.getElementById('video').srcObject = videoStream;
             } catch (err) {
-                alert('No pudimos acceder a la cámara. Por favor, sube una foto desde tu galería.');
                 console.error(err);
             }
         }
@@ -895,29 +464,18 @@
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
-            
-            // Mirror the image ( selfie mode)
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0);
-            
-            // Convert to base64 and store
             capturedImage = canvas.toDataURL('image/jpeg', 0.8);
-            
-            // Stop camera
             stopCamera();
-            
-            // Go to loading
             showScreen('loading-screen');
         }
         
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
-                // Stop camera if active
                 stopCamera();
-                
-                // Convert file to base64
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     capturedImage = e.target.result;
@@ -927,14 +485,13 @@
             }
         }
         
-        // Real Analysis with AILabTools API
+        // Analysis
         async function startAnalysis() {
             const progressBar = document.getElementById('progress-fill');
             const progressText = document.getElementById('progress-text');
             
-            // Start progress animation
             let progress = 0;
-            const progressInterval = setInterval(() => {
+            const interval = setInterval(() => {
                 if (progress < 90) {
                     progress += 1;
                     progressBar.style.width = progress + '%';
@@ -942,219 +499,113 @@
                 }
             }, 100);
             
-            // Mark first step as done
-            updateStep('step-1', 'done');
-            updateStep('step-2', 'active');
+            document.getElementById('step-1').classList.add('active');
             
             try {
-                // Call our backend function
                 const response = await fetch('/.netlify/functions/analyze-skin', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        image: capturedImage
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: capturedImage })
                 });
                 
                 const result = await response.json();
                 
-                // Complete progress
-                clearInterval(progressInterval);
+                clearInterval(interval);
                 progressBar.style.width = '100%';
                 progressText.textContent = '100%';
-                updateStep('step-2', 'done');
-                updateStep('step-3', 'done');
-                updateStep('step-4', 'done');
                 
-                if (result.success) {
+                document.getElementById('step-1').classList.remove('active');
+                document.getElementById('step-1').classList.add('done');
+                document.getElementById('step-2').classList.add('active');
+                
+                setTimeout(() => {
+                    document.getElementById('step-2').classList.remove('active');
+                    document.getElementById('step-2').classList.add('done');
+                    document.getElementById('step-3').classList.add('active');
+                    
                     setTimeout(() => {
-                        showResults(result);
-                    }, 500);
-                } else {
-                    alert('Error: ' + (result.error || 'No se pudo analizar la imagen'));
-                    showScreen('camera-screen');
-                }
+                        if (result.success) {
+                            showResults(result);
+                        } else {
+                            alert('Error: ' + (result.error || 'No se pudo analizar'));
+                            showScreen('camera-screen');
+                        }
+                    }, 300);
+                }, 300);
                 
             } catch (error) {
-                clearInterval(progressInterval);
-                console.error('Analysis error:', error);
-                alert('Error al conectar con el servidor. Intenta de nuevo.');
+                clearInterval(interval);
+                console.error(error);
+                alert('Error de conexión');
                 showScreen('camera-screen');
             }
         }
         
-        function updateStep(stepId, status) {
-            const stepEl = document.getElementById(stepId);
-            stepEl.classList.remove('active', 'done');
-            stepEl.classList.add(status);
-            if (status === 'done') {
-                stepEl.querySelector('.step-icon').textContent = '✓';
-            }
-        }
-        
-        // Results with real data
+        // Results
         function showResults(data) {
-            // Save to history
-            saveAnalysisToHistory(data);
+            // Score
+            const score = data.overallScore || 0;
+            document.getElementById('overall-score').textContent = score;
             
-            // Get previous analysis for comparison
-            const previousAnalysis = getPreviousAnalysis();
-            
-            // Use real metrics from API
-            const metrics = data.metrics || [];
-            const overallScore = data.overallScore || 68;
-            
-            document.getElementById('overall-score').textContent = overallScore;
-            
-            // Show skin age if available
-            if (data.skinAge) {
-                document.getElementById('apparent-age').textContent = data.skinAge;
-                const ageDiffEl = document.getElementById('age-diff');
-                const ageDiff = data.skinAge - userAge;
-                if (ageDiff > 0) {
-                    ageDiffEl.textContent = `+${ageDiff} años 😕`;
-                    ageDiffEl.className = 'age-diff positive';
-                } else if (ageDiff < 0) {
-                    ageDiffEl.textContent = `${ageDiff} años 🎉`;
-                    ageDiffEl.className = 'age-diff negative';
+            // Age
+            const skinAge = data.skinAge;
+            if (skinAge !== null && skinAge !== undefined) {
+                document.getElementById('apparent-age').textContent = skinAge;
+                const diff = skinAge - userAge;
+                const diffEl = document.getElementById('age-diff');
+                
+                if (diff > 0) {
+                    diffEl.textContent = '+' + diff + ' años';
+                    diffEl.className = 'age-diff positive';
+                } else if (diff < 0) {
+                    diffEl.textContent = diff + ' años';
+                    diffEl.className = 'age-diff negative';
                 } else {
-                    ageDiffEl.textContent = 'Perfecto ✨';
-                    ageDiffEl.className = 'age-diff';
+                    diffEl.textContent = 'Perfecto';
+                    diffEl.className = 'age-diff';
                 }
+            } else {
+                document.getElementById('apparent-age').textContent = '--';
+                document.getElementById('age-diff').textContent = '';
             }
             
-            // Populate metrics grid with ALL metrics
-            const metricsGrid = document.getElementById('metrics-grid');
-            metricsGrid.innerHTML = metrics.map(m => {
-                const color = m.score >= 70 ? 'var(--primary)' : 
-                              m.score >= 50 ? 'var(--accent)' : 'var(--warning)';
+            document.getElementById('actual-age').textContent = userAge;
+            
+            // Metrics
+            const metrics = data.metrics || [];
+            document.getElementById('metrics-title').textContent = 
+                metrics.length > 0 ? `${metrics.length} métricas analizadas` : 'Métricas';
+            
+            const grid = document.getElementById('metrics-grid');
+            grid.innerHTML = '';
+            
+            metrics.forEach(m => {
+                // Handle null/undefined scores
+                const scoreValue = m.score !== null && m.score !== undefined ? m.score : 0;
+                const displayScore = scoreValue !== null && scoreValue !== undefined ? scoreValue + '%' : '--';
                 
-                // Show improvement indicator if we have previous data
-                let improvementIndicator = '';
-                if (previousAnalysis) {
-                    const prevMetric = previousAnalysis.metrics.find(pm => pm.name === m.name);
-                    if (prevMetric) {
-                        const diff = m.score - prevMetric.score;
-                        if (diff > 2) {
-                            improvementIndicator = `<span style="color: var(--primary); font-size: 11px;">▲ +${diff}%</span>`;
-                        } else if (diff < -2) {
-                            improvementIndicator = `<span style="color: var(--warning); font-size: 11px;">▼ ${diff}%</span>`;
-                        }
-                    }
-                }
+                // Color based on score
+                let color = '#00BFA5';
+                if (scoreValue < 50) color = '#FF6B6B';
+                else if (scoreValue < 70) color = '#FFA726';
                 
-                return `
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="metric-name">${m.icon} ${m.name}</span>
-                            <span class="metric-score" style="color: ${color}">${m.score}% ${improvementIndicator}</span>
-                        </div>
-                        <div class="metric-bar">
-                            <div class="metric-fill" style="width: ${m.score}%; background: ${color}"></div>
-                        </div>
-                        ${m.description ? `<div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">${m.description}</div>` : ''}
+                const card = document.createElement('div');
+                card.className = 'metric-card';
+                card.innerHTML = `
+                    <div class="metric-header">
+                        <span class="metric-name">${m.icon || '•'} ${m.name}</span>
+                        <span class="metric-score" style="color: ${color}">${displayScore}</span>
                     </div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" style="width: ${scoreValue}%; background: ${color}"></div>
+                    </div>
+                    ${m.description ? `<div class="metric-description">${m.description}</div>` : ''}
                 `;
-            }).join('');
-            
-            // Update ranking if available
-            if (data.rankingPercentile) {
-                const rankingSection = document.querySelector('.ranking-title');
-                if (rankingSection) {
-                    rankingSection.textContent = `Top ${data.rankingPercentile}%`;
-                }
-                const rankingSubtitle = document.querySelector('.ranking-subtitle');
-                if (rankingSubtitle) {
-                    rankingSubtitle.textContent = `Tu piel está mejor que el ${100 - data.rankingPercentile}% de personas de ${userAge} años`;
-                }
-            }
-            
-            // Show comparison if we have previous data
-            if (previousAnalysis) {
-                showComparison(data, previousAnalysis);
-            }
+                grid.appendChild(card);
+            });
             
             showScreen('results-screen');
         }
-        
-        // Show comparison with previous analysis
-        function showComparison(current, previous) {
-            const scoreDiff = current.overallScore - previous.overallScore;
-            const percentChange = Math.round((scoreDiff / previous.overallScore) * 100);
-            
-            // Add comparison section after metrics
-            const comparisonHTML = `
-                <div class="comparison-section" style="background: var(--white); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow);">
-                    <h3 class="section-title">📊 Comparación con tu último análisis</h3>
-                    <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 16px;">
-                        <div>
-                            <div style="font-size: 12px; color: var(--text-light);">Score anterior</div>
-                            <div style="font-size: 32px; font-weight: 700;">${previous.overallScore}</div>
-                        </div>
-                        <div style="font-size: 32px; color: ${scoreDiff >= 0 ? 'var(--primary)' : 'var(--warning)'};">
-                            ${scoreDiff >= 0 ? '→' : '←'}
-                        </div>
-                        <div>
-                            <div style="font-size: 12px; color: var(--text-light);">Score actual</div>
-                            <div style="font-size: 32px; font-weight: 700;">${current.overallScore}</div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 16px; font-size: 18px; font-weight: 600; color: ${scoreDiff >= 0 ? 'var(--primary)' : 'var(--warning)'};">
-                        ${scoreDiff > 0 ? `¡Mejoraste ${scoreDiff} puntos! 🎉` : 
-                          scoreDiff < 0 ? `Bajaste ${Math.abs(scoreDiff)} puntos` : 
-                          'Te mantienes estable ✨'}
-                        <span style="font-size: 14px; color: var(--text-light);">(${percentChange >= 0 ? '+' : ''}${percentChange}%)</span>
-                    </div>
-                </div>
-            `;
-            
-            // Insert after metrics grid
-            const metricsGrid = document.getElementById('metrics-grid');
-            if (metricsGrid && !document.querySelector('.comparison-section')) {
-                metricsGrid.insertAdjacentHTML('afterend', comparisonHTML);
-            }
-        }
-        
-        // Share & Challenge
-        function challengeFriend() {
-            const text = '¡Acabo de descubrir que mi piel tiene 27 años! 😱 ¿Y la tuya? Analízala gratis en Heartly AI';
-            const url = window.location.href;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Heartly AI - Desafío de Piel',
-                    text: text,
-                    url: url
-                });
-            } else {
-                // Fallback: copy to clipboard
-                navigator.clipboard.writeText(`${text}\n${url}`);
-                alert('¡Link copiado! Compártelo con tu amiga 👯');
-            }
-        }
-        
-        function shareResults() {
-            const text = 'Mi piel aparenta 27 años y está en el Top 32% 🏆 ¿Y la tuya?';
-            const url = window.location.href;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Mi Análisis de Piel - Heartly AI',
-                    text: text,
-                    url: url
-                });
-            } else {
-                navigator.clipboard.writeText(`${text}\n${url}`);
-                alert('¡Resultados copiados! Pégalos en Instagram, WhatsApp o donde quieras 📲');
-            }
-        }
-        
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            stopCamera();
-        });
     </script>
 </body>
 </html>
