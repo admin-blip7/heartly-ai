@@ -776,6 +776,78 @@
         let videoStream = null;
         let capturedImage = null; // Store captured/uploaded image
         
+        // ==================== STORAGE FUNCTIONS ====================
+        
+        /**
+         * Save analysis to history
+         */
+        function saveAnalysisToHistory(analysis) {
+            const history = getAnalysisHistory();
+            
+            const analysisRecord = {
+                analysisId: analysis.analysisId,
+                timestamp: analysis.timestamp,
+                overallScore: analysis.overallScore,
+                skinAge: analysis.skinAge,
+                metrics: analysis.metrics,
+                skinType: analysis.skinType,
+                rankingPercentile: analysis.rankingPercentile
+            };
+            
+            history.push(analysisRecord);
+            
+            // Keep only last 50 analyses
+            if (history.length > 50) {
+                history.shift();
+            }
+            
+            localStorage.setItem('heartly_analysis_history', JSON.stringify(history));
+            
+            console.log('✅ Analysis saved:', analysisRecord.analysisId);
+            return analysisRecord;
+        }
+        
+        /**
+         * Get analysis history
+         */
+        function getAnalysisHistory() {
+            const history = localStorage.getItem('heartly_analysis_history');
+            return history ? JSON.parse(history) : [];
+        }
+        
+        /**
+         * Get previous analysis (before latest)
+         */
+        function getPreviousAnalysis() {
+            const history = getAnalysisHistory();
+            return history.length > 1 ? history[history.length - 2] : null;
+        }
+        
+        /**
+         * Get history statistics
+         */
+        function getHistoryStats() {
+            const history = getAnalysisHistory();
+            
+            if (history.length === 0) {
+                return {
+                    totalAnalyses: 0,
+                    averageScore: null,
+                    bestScore: null
+                };
+            }
+            
+            const scores = history.map(a => a.overallScore);
+            
+            return {
+                totalAnalyses: history.length,
+                averageScore: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
+                bestScore: Math.max(...scores)
+            };
+        }
+        
+        // ==================== END STORAGE ====================
+        
         // Screen Management
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
@@ -924,46 +996,65 @@
         
         // Results with real data
         function showResults(data) {
+            // Save to history
+            saveAnalysisToHistory(data);
+            
+            // Get previous analysis for comparison
+            const previousAnalysis = getPreviousAnalysis();
+            
             // Use real metrics from API
             const metrics = data.metrics || [];
             const overallScore = data.overallScore || 68;
             
             document.getElementById('overall-score').textContent = overallScore;
             
-            // Calculate apparent age based on score
-            const ageDifference = overallScore >= 75 ? -2 : 
-                                  overallScore >= 65 ? 0 : 
-                                  overallScore >= 55 ? 2 : 4;
-            const apparentAge = userAge + ageDifference;
-            
-            document.getElementById('apparent-age').textContent = apparentAge;
-            
-            const ageDiffEl = document.getElementById('age-diff');
-            if (ageDifference > 0) {
-                ageDiffEl.textContent = `+${ageDifference} años 😕`;
-                ageDiffEl.className = 'age-diff positive';
-            } else if (ageDifference < 0) {
-                ageDiffEl.textContent = `${ageDifference} años 🎉`;
-                ageDiffEl.className = 'age-diff negative';
-            } else {
-                ageDiffEl.textContent = 'Perfecto ✨';
-                ageDiffEl.className = 'age-diff';
+            // Show skin age if available
+            if (data.skinAge) {
+                document.getElementById('apparent-age').textContent = data.skinAge;
+                const ageDiffEl = document.getElementById('age-diff');
+                const ageDiff = data.skinAge - userAge;
+                if (ageDiff > 0) {
+                    ageDiffEl.textContent = `+${ageDiff} años 😕`;
+                    ageDiffEl.className = 'age-diff positive';
+                } else if (ageDiff < 0) {
+                    ageDiffEl.textContent = `${ageDiff} años 🎉`;
+                    ageDiffEl.className = 'age-diff negative';
+                } else {
+                    ageDiffEl.textContent = 'Perfecto ✨';
+                    ageDiffEl.className = 'age-diff';
+                }
             }
             
-            // Populate metrics grid with real data
+            // Populate metrics grid with ALL metrics
             const metricsGrid = document.getElementById('metrics-grid');
             metricsGrid.innerHTML = metrics.map(m => {
                 const color = m.score >= 70 ? 'var(--primary)' : 
                               m.score >= 50 ? 'var(--accent)' : 'var(--warning)';
+                
+                // Show improvement indicator if we have previous data
+                let improvementIndicator = '';
+                if (previousAnalysis) {
+                    const prevMetric = previousAnalysis.metrics.find(pm => pm.name === m.name);
+                    if (prevMetric) {
+                        const diff = m.score - prevMetric.score;
+                        if (diff > 2) {
+                            improvementIndicator = `<span style="color: var(--primary); font-size: 11px;">▲ +${diff}%</span>`;
+                        } else if (diff < -2) {
+                            improvementIndicator = `<span style="color: var(--warning); font-size: 11px;">▼ ${diff}%</span>`;
+                        }
+                    }
+                }
+                
                 return `
                     <div class="metric-card">
                         <div class="metric-header">
                             <span class="metric-name">${m.icon} ${m.name}</span>
-                            <span class="metric-score" style="color: ${color}">${m.score}%</span>
+                            <span class="metric-score" style="color: ${color}">${m.score}% ${improvementIndicator}</span>
                         </div>
                         <div class="metric-bar">
                             <div class="metric-fill" style="width: ${m.score}%; background: ${color}"></div>
                         </div>
+                        ${m.description ? `<div style="font-size: 11px; color: var(--text-light); margin-top: 4px;">${m.description}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -980,7 +1071,50 @@
                 }
             }
             
+            // Show comparison if we have previous data
+            if (previousAnalysis) {
+                showComparison(data, previousAnalysis);
+            }
+            
             showScreen('results-screen');
+        }
+        
+        // Show comparison with previous analysis
+        function showComparison(current, previous) {
+            const scoreDiff = current.overallScore - previous.overallScore;
+            const percentChange = Math.round((scoreDiff / previous.overallScore) * 100);
+            
+            // Add comparison section after metrics
+            const comparisonHTML = `
+                <div class="comparison-section" style="background: var(--white); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow);">
+                    <h3 class="section-title">📊 Comparación con tu último análisis</h3>
+                    <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 16px;">
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-light);">Score anterior</div>
+                            <div style="font-size: 32px; font-weight: 700;">${previous.overallScore}</div>
+                        </div>
+                        <div style="font-size: 32px; color: ${scoreDiff >= 0 ? 'var(--primary)' : 'var(--warning)'};">
+                            ${scoreDiff >= 0 ? '→' : '←'}
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--text-light);">Score actual</div>
+                            <div style="font-size: 32px; font-weight: 700;">${current.overallScore}</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 16px; font-size: 18px; font-weight: 600; color: ${scoreDiff >= 0 ? 'var(--primary)' : 'var(--warning)'};">
+                        ${scoreDiff > 0 ? `¡Mejoraste ${scoreDiff} puntos! 🎉` : 
+                          scoreDiff < 0 ? `Bajaste ${Math.abs(scoreDiff)} puntos` : 
+                          'Te mantienes estable ✨'}
+                        <span style="font-size: 14px; color: var(--text-light);">(${percentChange >= 0 ? '+' : ''}${percentChange}%)</span>
+                    </div>
+                </div>
+            `;
+            
+            // Insert after metrics grid
+            const metricsGrid = document.getElementById('metrics-grid');
+            if (metricsGrid && !document.querySelector('.comparison-section')) {
+                metricsGrid.insertAdjacentHTML('afterend', comparisonHTML);
+            }
         }
         
         // Share & Challenge

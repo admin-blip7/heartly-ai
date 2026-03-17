@@ -35,11 +35,11 @@ export async function handler(event, context) {
       contentType: 'image/jpeg'
     });
     
-    // Request visualization maps
-    formData.append('return_maps', 'red_area,brown_area,texture_enhanced_pores,texture_enhanced_lines,water_area,rough_area');
+    // Request ALL visualization maps
+    formData.append('return_maps', 'red_area,brown_area,texture_enhanced_pores,texture_enhanced_blackheads,texture_enhanced_oily_area,texture_enhanced_lines,water_area,rough_area,roi_outline_map,texture_enhanced_bw');
     
-    // Request detailed marks/coordinates
-    formData.append('return_marks', 'wrinkle_mark,dark_circle_outline,sensitivity_mark,melanin_mark');
+    // Request ALL detailed marks/coordinates
+    formData.append('return_marks', 'wrinkle_mark,right_nasolabial_list,right_mouth_list,right_eye_wrinkle_list,right_crowsfeet_list,right_cheek_list,left_nasolabial_list,left_mouth_list,left_eye_wrinkle_list,left_crowsfeet_list,left_cheek_list,glabella_wrinkle_list,forehead_wrinkle_list,dark_circle_outline,sensitivity_mark,melanin_mark,cheekbone_mark');
 
     // Call AILabTools PRO API
     const response = await fetch('https://www.ailabapi.com/api/portrait/analysis/skin-analysis-pro', {
@@ -90,169 +90,26 @@ export async function handler(event, context) {
 
 /**
  * Transform AILabTools PRO API response to our app format
+ * Includes ALL features from Skin Analysis PRO
  */
 function transformResults(apiResult) {
   const result = apiResult.result;
   const metrics = [];
   
-  // WRINKLES & LINES - Using severity scores from PRO API
-  if (result.forehead_wrinkle) {
-    const severity = result.forehead_wrinkle_severity || 0;
+  // ==================== SKIN AGE ANALYSIS ====================
+  if (result.skin_age !== undefined) {
     metrics.push({
-      name: 'Arrugas Frente',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.forehead_wrinkle.confidence || 0.9,
-      icon: '〰️',
-      category: 'wrinkles',
-      severity: severity,
-      hasWrinkles: result.forehead_wrinkle.value === 1
+      name: 'Edad de la Piel',
+      score: 100 - Math.abs(result.skin_age - 25) * 2, // Ideal age ~25
+      value: result.skin_age,
+      confidence: 0.9,
+      icon: '👶',
+      category: 'age',
+      description: `Tu piel aparenta ${result.skin_age} años`
     });
   }
   
-  if (result.crows_feet) {
-    const severity = result.crows_feet_severity || 0;
-    metrics.push({
-      name: 'Patas de Gallo',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.crows_feet.confidence || 0.9,
-      icon: '👁️',
-      category: 'wrinkles',
-      severity: severity,
-      hasWrinkles: result.crows_feet.value === 1
-    });
-  }
-  
-  if (result.eye_finelines) {
-    const severity = result.eye_finelines_severity || 0;
-    metrics.push({
-      name: 'Líneas Finas Ojos',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.eye_finelines.confidence || 0.9,
-      icon: '✨',
-      category: 'wrinkles',
-      severity: severity,
-      hasWrinkles: result.eye_finelines.value === 1
-    });
-  }
-  
-  if (result.glabella_wrinkle) {
-    const severity = result.glabella_wrinkle_severity || 0;
-    metrics.push({
-      name: 'Líneas Entrecejo',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.glabella_wrinkle.confidence || 0.9,
-      icon: '😤',
-      category: 'wrinkles',
-      severity: severity,
-      hasWrinkles: result.glabella_wrinkle.value === 1
-    });
-  }
-  
-  if (result.nasolabial_fold) {
-    const severity = result.nasolabial_fold_severity || 0;
-    metrics.push({
-      name: 'Surcos Nasolabiales',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.nasolabial_fold.confidence || 0.9,
-      icon: '😊',
-      category: 'wrinkles',
-      severity: severity,
-      hasWrinkles: result.nasolabial_fold.value === 1
-    });
-  }
-  
-  // EYE PROBLEMS
-  if (result.dark_circle) {
-    const severity = result.dark_circle_severity || 0;
-    metrics.push({
-      name: 'Ojeras',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.dark_circle.confidence || 0.9,
-      icon: '🌑',
-      category: 'eyes',
-      severity: severity,
-      hasDarkCircles: result.dark_circle.value === 1
-    });
-  }
-  
-  if (result.eye_pouch) {
-    const severity = result.eye_pouch_severity || 0;
-    metrics.push({
-      name: 'Bolsas en Ojos',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.eye_pouch.confidence || 0.9,
-      icon: '👁️',
-      category: 'eyes',
-      severity: severity,
-      hasEyeBags: result.eye_pouch.value === 1
-    });
-  }
-  
-  // PORES - PRO API gives detailed pore info
-  if (result.pores || result.pores_forehead) {
-    const poreScore = calculatePoreScore(result);
-    metrics.push({
-      name: 'Poros',
-      score: poreScore,
-      confidence: 0.85,
-      icon: '⚫',
-      category: 'texture',
-      details: {
-        forehead: result.pores_forehead?.value || 0,
-        leftCheek: result.pores_left_cheek?.value || 0,
-        rightCheek: result.pores_right_cheek?.value || 0,
-        jaw: result.pores_jaw?.value || 0
-      }
-    });
-  }
-  
-  // BLACKHEADS
-  if (result.blackhead) {
-    const severity = result.blackhead_severity || 0;
-    metrics.push({
-      name: 'Puntos Negros',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.blackhead.confidence || 0.9,
-      icon: '⬛',
-      category: 'texture',
-      severity: severity,
-      hasBlackheads: result.blackhead.value === 1
-    });
-  }
-  
-  // ACNE - PRO API has detailed acne classification
-  if (result.acne) {
-    const acneScore = calculateAcneScore(result);
-    metrics.push({
-      name: 'Acné',
-      score: acneScore,
-      confidence: result.acne.confidence || 0.9,
-      icon: '🔴',
-      category: 'spots',
-      hasAcne: result.acne.value === 1,
-      details: {
-        papules: result.acne_papule?.count || 0,
-        pustules: result.acne_pustule?.count || 0,
-        nodules: result.acne_nodule?.count || 0
-      }
-    });
-  }
-  
-  // SKIN SPOTS / PIGMENTATION
-  if (result.skin_spot) {
-    const severity = result.skin_spot_severity || 0;
-    metrics.push({
-      name: 'Manchas',
-      score: calculateScoreFromSeverity(severity),
-      confidence: result.skin_spot.confidence || 0.9,
-      icon: '🎨',
-      category: 'spots',
-      severity: severity,
-      hasSpots: result.skin_spot.value === 1
-    });
-  }
-  
-  // SKIN TYPE
+  // ==================== SKIN TYPE ====================
   if (result.skin_type) {
     const skinTypes = ['Piel Grasa', 'Piel Seca', 'Piel Normal', 'Piel Mixta'];
     const skinTypeIndex = result.skin_type.skin_type;
@@ -269,27 +126,367 @@ function transformResults(apiResult) {
     });
   }
   
-  // SENSITIVITY (PRO API feature)
-  if (result.sensitivity !== undefined) {
+  // ==================== SKIN COLOR CLASSIFICATION ====================
+  if (result.skin_color) {
     metrics.push({
-      name: 'Sensibilidad',
-      score: 100 - (result.sensitivity_level || 0),
-      confidence: 0.85,
-      icon: '🔴',
-      category: 'sensitivity',
-      level: result.sensitivity_level || 0,
-      hasSensitivity: result.sensitivity === 1
+      name: 'Color de Piel',
+      score: 85,
+      confidence: result.skin_color.confidence || 0.85,
+      icon: '🎨',
+      category: 'color',
+      value: result.skin_color.classification || 'Normal',
+      ita: result.skin_color.ita_value,
+      undertone: result.skin_color.undertone
     });
   }
   
-  // MOISTURE (PRO API feature)
+  // ==================== OIL/SHINE DETECTION ====================
+  if (result.oily_area !== undefined || result.oil_level !== undefined) {
+    const oilLevel = result.oil_level || 0;
+    metrics.push({
+      name: 'Nivel de Grasa',
+      score: 100 - oilLevel,
+      confidence: 0.85,
+      icon: '✨',
+      category: 'oil',
+      level: oilLevel,
+      area: result.oily_area_percentage || 0,
+      description: oilLevel > 50 ? 'Piel muy grasa' : oilLevel > 30 ? 'Piel mixta' : 'Piel normal'
+    });
+  }
+  
+  // ==================== MOISTURE/HYDRATION ====================
   if (result.water_area !== undefined || result.moisture_level !== undefined) {
+    const moistureLevel = result.moisture_level || 70;
     metrics.push({
       name: 'Hidratación',
-      score: result.moisture_level || 70,
+      score: moistureLevel,
       confidence: 0.85,
       icon: '💧',
-      category: 'hydration'
+      category: 'hydration',
+      level: moistureLevel,
+      area: result.water_area_percentage || 0,
+      description: moistureLevel < 50 ? 'Piel deshidratada' : moistureLevel < 70 ? 'Hidratación media' : 'Bien hidratada'
+    });
+  }
+  
+  // ==================== WRINKLES & LINES (8 types) ====================
+  
+  // Forehead Wrinkles
+  if (result.forehead_wrinkle) {
+    const severity = result.forehead_wrinkle_severity || 0;
+    metrics.push({
+      name: 'Arrugas Frente',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.forehead_wrinkle.confidence || 0.9,
+      icon: '〰️',
+      category: 'wrinkles',
+      severity: severity,
+      hasWrinkles: result.forehead_wrinkle.value === 1,
+      count: result.forehead_wrinkle_count || 0,
+      area: result.forehead_wrinkle_area || 0
+    });
+  }
+  
+  // Crow's Feet (Left & Right)
+  if (result.crows_feet) {
+    const severity = result.crows_feet_severity || 0;
+    metrics.push({
+      name: 'Patas de Gallo',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.crows_feet.confidence || 0.9,
+      icon: '👁️',
+      category: 'wrinkles',
+      severity: severity,
+      hasWrinkles: result.crows_feet.value === 1,
+      left: result.left_crowsfeet_severity || 0,
+      right: result.right_crowsfeet_severity || 0
+    });
+  }
+  
+  // Fine Lines Under Eyes (Left & Right)
+  if (result.eye_finelines) {
+    const severity = result.eye_finelines_severity || 0;
+    metrics.push({
+      name: 'Líneas Finas Ojos',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.eye_finelines.confidence || 0.9,
+      icon: '✨',
+      category: 'wrinkles',
+      severity: severity,
+      hasWrinkles: result.eye_finelines.value === 1,
+      left: result.left_eye_finelines_severity || 0,
+      right: result.right_eye_finelines_severity || 0
+    });
+  }
+  
+  // Glabellar Lines (Between Eyebrows)
+  if (result.glabella_wrinkle) {
+    const severity = result.glabella_wrinkle_severity || 0;
+    metrics.push({
+      name: 'Líneas Entrecejo',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.glabella_wrinkle.confidence || 0.9,
+      icon: '😤',
+      category: 'wrinkles',
+      severity: severity,
+      hasWrinkles: result.glabella_wrinkle.value === 1
+    });
+  }
+  
+  // Nasolabial Folds
+  if (result.nasolabial_fold) {
+    const severity = result.nasolabial_fold_severity || 0;
+    metrics.push({
+      name: 'Surcos Nasolabiales',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.nasolabial_fold.confidence || 0.9,
+      icon: '😊',
+      category: 'wrinkles',
+      severity: severity,
+      hasWrinkles: result.nasolabial_fold.value === 1,
+      left: result.left_nasolabial_severity || 0,
+      right: result.right_nasolabial_severity || 0
+    });
+  }
+  
+  // Mouth Corner Lines (Left & Right)
+  if (result.mouth_corner_lines) {
+    const severity = result.mouth_corner_severity || 0;
+    metrics.push({
+      name: 'Líneas Comisuras',
+      score: calculateScoreFromSeverity(severity),
+      confidence: 0.85,
+      icon: '😐',
+      category: 'wrinkles',
+      severity: severity,
+      left: result.left_mouth_severity || 0,
+      right: result.right_mouth_severity || 0
+    });
+  }
+  
+  // Cheek Lines (Left & Right)
+  if (result.cheek_lines) {
+    const severity = result.cheek_lines_severity || 0;
+    metrics.push({
+      name: 'Líneas Mejillas',
+      score: calculateScoreFromSeverity(severity),
+      confidence: 0.85,
+      icon: '😊',
+      category: 'wrinkles',
+      severity: severity,
+      left: result.left_cheek_severity || 0,
+      right: result.right_cheek_severity || 0
+    });
+  }
+  
+  // ==================== EYE PROBLEMS ====================
+  
+  // Dark Circles (with type classification)
+  if (result.dark_circle) {
+    const severity = result.dark_circle_severity || 0;
+    const types = ['Pigmentadas', 'Vasculares', 'Estructurales', 'Mixtas'];
+    metrics.push({
+      name: 'Ojeras',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.dark_circle.confidence || 0.9,
+      icon: '🌑',
+      category: 'eyes',
+      severity: severity,
+      hasDarkCircles: result.dark_circle.value === 1,
+      type: types[result.dark_circle_type || 0],
+      left: result.left_dark_circle_severity || 0,
+      right: result.right_dark_circle_severity || 0
+    });
+  }
+  
+  // Eye Bags
+  if (result.eye_pouch) {
+    const severity = result.eye_pouch_severity || 0;
+    metrics.push({
+      name: 'Bolsas en Ojos',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.eye_pouch.confidence || 0.9,
+      icon: '👁️',
+      category: 'eyes',
+      severity: severity,
+      hasEyeBags: result.eye_pouch.value === 1
+    });
+  }
+  
+  // ==================== DOUBLE EYELID ====================
+  if (result.double_eyelid) {
+    const eyelidTypes = ['Monopárpado', 'Doble Párpado Paralelo', 'Doble Párpado Abanico'];
+    metrics.push({
+      name: 'Tipo de Párpado',
+      score: 85,
+      confidence: result.double_eyelid.confidence || 0.85,
+      icon: '👀',
+      category: 'eyes',
+      left: eyelidTypes[result.left_eyelid_type || 0],
+      right: eyelidTypes[result.right_eyelid_type || 0]
+    });
+  }
+  
+  // ==================== PORES (4 regions) ====================
+  if (result.pores || result.pores_forehead) {
+    const poreScore = calculateDetailedPoreScore(result);
+    metrics.push({
+      name: 'Poros',
+      score: poreScore.overall,
+      confidence: 0.85,
+      icon: '⚫',
+      category: 'texture',
+      details: {
+        forehead: {
+          has: result.pores_forehead?.value || 0,
+          severity: result.pores_forehead_severity || 0,
+          count: result.pores_forehead_count || 0,
+          size: result.pores_forehead_size || 0
+        },
+        leftCheek: {
+          has: result.pores_left_cheek?.value || 0,
+          severity: result.pores_left_cheek_severity || 0,
+          count: result.pores_left_cheek_count || 0,
+          size: result.pores_left_cheek_size || 0
+        },
+        rightCheek: {
+          has: result.pores_right_cheek?.value || 0,
+          severity: result.pores_right_cheek_severity || 0,
+          count: result.pores_right_cheek_count || 0,
+          size: result.pores_right_cheek_size || 0
+        },
+        chin: {
+          has: result.pores_jaw?.value || 0,
+          severity: result.pores_jaw_severity || 0,
+          count: result.pores_jaw_count || 0,
+          size: result.pores_jaw_size || 0
+        }
+      },
+      totalCount: poreScore.totalCount,
+      avgSize: poreScore.avgSize
+    });
+  }
+  
+  // ==================== BLACKHEADS ====================
+  if (result.blackhead) {
+    const severity = result.blackhead_severity || 0;
+    metrics.push({
+      name: 'Puntos Negros',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.blackhead.confidence || 0.9,
+      icon: '⬛',
+      category: 'texture',
+      severity: severity,
+      hasBlackheads: result.blackhead.value === 1,
+      count: result.blackhead_count || 0,
+      area: result.blackhead_area || 0
+    });
+  }
+  
+  // ==================== CLOSED COMEDONES ====================
+  if (result.closed_comedone) {
+    metrics.push({
+      name: 'Comedones Cerrados',
+      score: result.closed_comedone.value === 0 ? 90 : 40,
+      confidence: result.closed_comedone.confidence || 0.85,
+      icon: '⚪',
+      category: 'texture',
+      hasComedones: result.closed_comedone.value === 1,
+      count: result.closed_comedone_count || 0
+    });
+  }
+  
+  // ==================== TEXTURE ====================
+  if (result.texture || result.rough_area) {
+    const roughness = result.roughness_level || 0;
+    metrics.push({
+      name: 'Textura',
+      score: 100 - roughness,
+      confidence: 0.85,
+      icon: '📊',
+      category: 'texture',
+      roughness: roughness,
+      area: result.rough_area_percentage || 0,
+      description: roughness > 50 ? 'Textura rugosa' : roughness > 30 ? 'Textura media' : 'Textura suave'
+    });
+  }
+  
+  // ==================== ACNE (4 types) ====================
+  if (result.acne || result.acne_papule || result.acne_pustule || result.acne_nodule) {
+    const acneScore = calculateDetailedAcneScore(result);
+    metrics.push({
+      name: 'Acné',
+      score: acneScore.overall,
+      confidence: result.acne?.confidence || 0.9,
+      icon: '🔴',
+      category: 'spots',
+      hasAcne: result.acne?.value === 1,
+      details: {
+        papules: {
+          count: result.acne_papule?.count || 0,
+          severity: result.acne_papule_severity || 0
+        },
+        pustules: {
+          count: result.acne_pustule?.count || 0,
+          severity: result.acne_pustule_severity || 0
+        },
+        nodules: {
+          count: result.acne_nodule?.count || 0,
+          severity: result.acne_nodule_severity || 0
+        },
+        marks: {
+          count: result.acne_mark?.count || 0
+        }
+      },
+      totalCount: acneScore.totalCount,
+      description: acneScore.description
+    });
+  }
+  
+  // ==================== PIGMENTATION/SPOTS ====================
+  if (result.skin_spot || result.pigmentation) {
+    const severity = result.skin_spot_severity || result.pigmentation_severity || 0;
+    metrics.push({
+      name: 'Manchas/Pigmentación',
+      score: calculateScoreFromSeverity(severity),
+      confidence: result.skin_spot?.confidence || 0.9,
+      icon: '🎨',
+      category: 'spots',
+      severity: severity,
+      hasSpots: result.skin_spot?.value === 1,
+      count: result.spot_count || 0,
+      area: result.pigmentation_area_percentage || 0,
+      description: severity > 5 ? 'Pigmentación notable' : severity > 2 ? 'Pigmentación leve' : 'Sin pigmentación'
+    });
+  }
+  
+  // ==================== MOLES ====================
+  if (result.mole) {
+    metrics.push({
+      name: 'Lunares',
+      score: 85,
+      confidence: result.mole.confidence || 0.85,
+      icon: '⚫',
+      category: 'spots',
+      hasMoles: result.mole.value === 1,
+      count: result.mole_count || 0
+    });
+  }
+  
+  // ==================== SENSITIVITY ====================
+  if (result.sensitivity !== undefined) {
+    const level = result.sensitivity_level || 0;
+    metrics.push({
+      name: 'Sensibilidad',
+      score: 100 - level,
+      confidence: 0.85,
+      icon: '🔴',
+      category: 'sensitivity',
+      level: level,
+      hasSensitivity: result.sensitivity === 1,
+      area: result.sensitivity_area_percentage || 0,
+      description: level > 50 ? 'Piel muy sensible' : level > 30 ? 'Sensibilidad media' : 'Piel normal'
     });
   }
   
@@ -301,14 +498,19 @@ function transformResults(apiResult) {
   // Determine ranking percentile
   const rankingPercentile = calculateRanking(overallScore);
   
-  // Extract visualization maps if available
+  // Extract ALL visualization maps
   const visualizations = {};
   if (apiResult.face_maps) {
     if (apiResult.face_maps.red_area) visualizations.redArea = apiResult.face_maps.red_area;
     if (apiResult.face_maps.brown_area) visualizations.brownArea = apiResult.face_maps.brown_area;
     if (apiResult.face_maps.texture_enhanced_pores) visualizations.pores = apiResult.face_maps.texture_enhanced_pores;
+    if (apiResult.face_maps.texture_enhanced_blackheads) visualizations.blackheads = apiResult.face_maps.texture_enhanced_blackheads;
+    if (apiResult.face_maps.texture_enhanced_oily_area) visualizations.oilyArea = apiResult.face_maps.texture_enhanced_oily_area;
     if (apiResult.face_maps.texture_enhanced_lines) visualizations.lines = apiResult.face_maps.texture_enhanced_lines;
     if (apiResult.face_maps.water_area) visualizations.moisture = apiResult.face_maps.water_area;
+    if (apiResult.face_maps.rough_area) visualizations.roughArea = apiResult.face_maps.rough_area;
+    if (apiResult.face_maps.roi_outline_map) visualizations.roiOutline = apiResult.face_maps.roi_outline_map;
+    if (apiResult.face_maps.texture_enhanced_bw) visualizations.enhancedBW = apiResult.face_maps.texture_enhanced_bw;
   }
   
   return {
@@ -321,11 +523,21 @@ function transformResults(apiResult) {
       type: ['Oily', 'Dry', 'Normal', 'Combination'][result.skin_type.skin_type],
       confidence: result.skin_type.details?.[result.skin_type.skin_type]?.confidence || 0
     } : null,
+    skinAge: result.skin_age || null,
     rankingPercentile,
     warnings: apiResult.warning || [],
     visualizations: Object.keys(visualizations).length > 0 ? visualizations : null,
+    timestamp: new Date().toISOString(),
+    analysisId: generateAnalysisId(),
     rawResult: apiResult
   };
+}
+
+/**
+ * Generate unique analysis ID
+ */
+function generateAnalysisId() {
+  return `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
@@ -333,59 +545,95 @@ function transformResults(apiResult) {
  * Lower severity = higher score (better skin)
  */
 function calculateScoreFromSeverity(severity) {
-  if (!severity || severity === 0) return 90; // No problem = excellent
-  // Convert severity (0-10) to score (0-100)
-  // severity 0 = score 90-100
-  // severity 5 = score 50
-  // severity 10 = score 10-20
+  if (!severity || severity === 0) return 90;
   return Math.max(10, Math.round(100 - (severity * 9)));
 }
 
 /**
- * Calculate pore score from detailed pore data
+ * Calculate detailed pore score from PRO API data
  */
-function calculatePoreScore(result) {
+function calculateDetailedPoreScore(result) {
   let totalScore = 0;
+  let totalCount = 0;
+  let totalSize = 0;
   let count = 0;
   
-  const poreRegions = ['pores_forehead', 'pores_left_cheek', 'pores_right_cheek', 'pores_jaw'];
+  const poreRegions = ['forehead', 'left_cheek', 'right_cheek', 'jaw'];
   
   poreRegions.forEach(region => {
-    if (result[region]) {
-      // If has enlarged pores (value=1), lower score
-      totalScore += result[region].value === 0 ? 85 : 35;
+    const poreData = result[`pores_${region}`];
+    const severity = result[`pores_${region}_severity`] || 0;
+    const regionCount = result[`pores_${region}_count`] || 0;
+    const regionSize = result[`pores_${region}_size`] || 0;
+    
+    if (poreData) {
+      totalScore += poreData.value === 0 ? 85 : 35 - (severity * 5);
+      totalCount += regionCount;
+      totalSize += regionSize;
       count++;
     }
   });
   
-  return count > 0 ? Math.round(totalScore / count) : 70;
+  return {
+    overall: count > 0 ? Math.round(totalScore / count) : 70,
+    totalCount: totalCount,
+    avgSize: count > 0 ? Math.round(totalSize / count) : 0
+  };
 }
 
 /**
- * Calculate acne score from detailed acne classification
+ * Calculate detailed acne score from PRO API classification
  */
-function calculateAcneScore(result) {
-  if (!result.acne || result.acne.value === 0) return 90;
-  
+function calculateDetailedAcneScore(result) {
   let severityPoints = 0;
+  let totalCount = 0;
   
   // Count different types of acne (more severe = more points)
-  if (result.acne_papule?.count) severityPoints += result.acne_papule.count * 2;
-  if (result.acne_pustule?.count) severityPoints += result.acne_pustule.count * 3;
-  if (result.acne_nodule?.count) severityPoints += result.acne_nodule.count * 5;
+  if (result.acne_papule?.count) {
+    severityPoints += result.acne_papule.count * 2;
+    totalCount += result.acne_papule.count;
+  }
+  if (result.acne_pustule?.count) {
+    severityPoints += result.acne_pustule.count * 3;
+    totalCount += result.acne_pustule.count;
+  }
+  if (result.acne_nodule?.count) {
+    severityPoints += result.acne_nodule.count * 5;
+    totalCount += result.acne_nodule.count;
+  }
+  if (result.acne_mark?.count) {
+    severityPoints += result.acne_mark.count * 1;
+    totalCount += result.acne_mark.count;
+  }
   
-  // Convert to score (0-10 severity to 10-90 score)
   const severity = Math.min(10, severityPoints);
-  return Math.max(10, Math.round(100 - (severity * 9)));
+  const score = Math.max(10, Math.round(100 - (severity * 9)));
+  
+  let description = 'Sin acné';
+  if (totalCount > 0) {
+    if (severityPoints > 20) {
+      description = 'Acné severo';
+    } else if (severityPoints > 10) {
+      description = 'Acné moderado';
+    } else {
+      description = 'Acné leve';
+    }
+  }
+  
+  return {
+    overall: score,
+    totalCount: totalCount,
+    description: description
+  };
 }
 
 /**
  * Calculate ranking percentile based on score
  */
 function calculateRanking(score) {
-  if (score >= 85) return Math.floor(Math.random() * 10) + 5;  // Top 5-15%
-  if (score >= 75) return Math.floor(Math.random() * 15) + 15; // Top 15-30%
-  if (score >= 65) return Math.floor(Math.random() * 20) + 30; // Top 30-50%
-  if (score >= 55) return Math.floor(Math.random() * 20) + 50; // Top 50-70%
-  return Math.floor(Math.random() * 20) + 70; // Top 70-90%
+  if (score >= 85) return Math.floor(Math.random() * 10) + 5;
+  if (score >= 75) return Math.floor(Math.random() * 15) + 15;
+  if (score >= 65) return Math.floor(Math.random() * 20) + 30;
+  if (score >= 55) return Math.floor(Math.random() * 20) + 50;
+  return Math.floor(Math.random() * 20) + 70;
 }
